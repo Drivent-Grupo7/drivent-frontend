@@ -1,15 +1,17 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import { useHotelWithRooms } from '../../../hooks/api/useHotel';
+import { useHotelWithRooms, useBookingByHotelId } from '../../../hooks/api/useHotel';
 
 export default function Hotel({ hotel }) {
   const { hotelWithRoom } = useHotelWithRooms(hotel.id);
+  const { bookingsByHotel } = useBookingByHotelId(hotel.id);
   const [ type, setType ] = useState('');
   const [ totalCapacity, setTotalCapacity ] = useState(0);
   useEffect(() => {
-    if(hotelWithRoom) {
+    if(hotelWithRoom && bookingsByHotel) {
       let count = 0;
       let types = [];
+      const bookings = bookingsByHotel.bookings.flat();
       for(const room of hotelWithRoom.Rooms) {
         count += room.capacity;
         if(room.capacity === 1 && !type.includes('Single')) {
@@ -31,7 +33,7 @@ export default function Hotel({ hotel }) {
       if(types.length === 1) {
         setType(`${types[0]}`);
       }
-      setTotalCapacity(count);
+      setTotalCapacity(count-bookings.length);
     }
   }, [hotelWithRoom, setTotalCapacity, setType]);
   if(hotelWithRoom) {

@@ -38,3 +38,20 @@ export function useHotelWithRooms(hotelId) {
     getHotelWithRoom
   };
 }
+export function useBookingByHotelId(hotelId) {
+  const token = useToken();
+  
+  const {
+    data: bookingsByHotel,
+    loading: bookingsByHotelLoading,
+    error: bookingsByHotelError,
+    act: getBookingsByHotel
+  } = useAsync(() => hotelApi.getBookingByHotelId(token, hotelId));
+
+  return {
+    bookingsByHotel,
+    bookingsByHotelLoading,
+    bookingsByHotelError,
+    getBookingsByHotel
+  };
+}
