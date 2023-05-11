@@ -3,6 +3,22 @@ import useToken from '../useToken';
 
 import * as hotelApi from '../../services/hotelApi';
 
+export function useSaveBooking() {
+  const token = useToken();
+
+  const {
+    loading: saveBookingLoading,
+    error: saveBookingError,
+    act: saveBooking
+  } = useAsync((data) => hotelApi.save(data, token), false);
+
+  return {
+    saveBookingLoading,
+    saveBookingError,
+    saveBooking
+  };
+}
+
 export function useHotel() {
   const token = useToken();
   

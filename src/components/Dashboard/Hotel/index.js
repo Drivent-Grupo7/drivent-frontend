@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { useHotelWithRooms, useBookingByHotelId } from '../../../hooks/api/useHotel';
 
-export default function Hotel({ hotel }) {
+export default function Hotel({ hotel, hotelClick, setHotelClick }) {
   const { hotelWithRoom } = useHotelWithRooms(hotel.id);
   const { bookingsByHotel } = useBookingByHotelId(hotel.id);
   const [ type, setType ] = useState('');
@@ -35,10 +35,10 @@ export default function Hotel({ hotel }) {
       }
       setTotalCapacity(count-bookings.length);
     }
-  }, [hotelWithRoom, setTotalCapacity, setType]);
-  if(hotelWithRoom) {
+  }, [hotelWithRoom, bookingsByHotel, setTotalCapacity, setType]);
+  if(hotelWithRoom && bookingsByHotel) {
     return (
-      <HotelContainer>
+      <HotelContainer hotelClick={hotelClick === hotel.id} onClick={() => setHotelClick(hotel.id)}>
         <img src={hotel.image} alt={hotel.name}/>
         <h2>{hotel.name}</h2>
         <div>
@@ -62,7 +62,7 @@ const HotelContainer = styled.div`
   justify-content: space-between;
   width: 196px;
   height: 264px;
-  background: #EBEBEB;
+  background-color: ${props => props.hotelClick ? '#FFEED2' : '#F1F1F1'};
   border-radius: 10px;
   margin-right: 19px;
   padding: 16px 14px;
