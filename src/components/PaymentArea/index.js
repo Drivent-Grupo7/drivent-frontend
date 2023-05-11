@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import useTicket from '../../hooks/api/useTicket';
 import { useEffect, useState } from 'react';
 import PaymentForm from './PaymentForm';
+import check from '../../assets/images/check.png';
 
 export default function PaymentArea() {
   const { ticket } = useTicket();
@@ -23,7 +24,14 @@ export default function PaymentArea() {
         <p>R$ {ticketPrice}</p>
       </TicketData>
       <Subtitle>Pagamento</Subtitle>
-      <PaymentForm />
+      <PaymentConfirmed>
+        <img src={check} alt='check-icon'/>
+        <div>
+          <p>Pagamento confirmado!</p>
+          <p>Prossiga para escolha de hospedagem e atividades</p>
+        </div>
+      </PaymentConfirmed>
+      {/* <PaymentForm /> */}
     </PaymentContainer>
   );
 }
@@ -67,5 +75,26 @@ const TicketData = styled.div`
     color: #898989;
     font-size: 14px;
     margin-top: 8px;
+  }
+`;
+
+const PaymentConfirmed = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+
+  div {
+    margin-left: 10px;
+  }
+
+  p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 19px;
+    color: #454545;
+  }
+
+  p:nth-child(1){
+    font-weight: bold;
   }
 `;
