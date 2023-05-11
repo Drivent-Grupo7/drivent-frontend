@@ -1,71 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
 
-export default class PaymentForm extends React.Component {
-    state = {
-      cvc: '',
-      expiry: '',
-      focus: '',
-      name: '',
-      number: '',
-    };
+export default function PaymentForm() {
+  const [number, setNumber] = useState('');
+  const [name, setName] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvc, setCvc] = useState('');
+  const [focus, setFocus] = useState('');
 
-    handleInputFocus = (e) => {
-      this.setState({ focus: e.target.name });
-    }
-    
-    handleInputChange = (e) => {
-      const { name, value } = e.target;
-      
-      this.setState({ [name]: value });
-    }
-    
-    render() {
-      return (
-        <CardContainer>
-          <Cards
-            cvc={this.state.cvc}
-            expiry={this.state.expiry}
-            focused={this.state.focus}
-            name={this.state.name}
-            number={this.state.number}
-          />
-          <Form>
-            <input
-              type="tel"
-              name="number"
-              placeholder="Card Number"
-              onChange={this.handleInputChange}
-              onFocus={this.handleInputFocus}
-            />
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              onChange={this.handleInputChange}
-              onFocus={this.handleInputFocus}
-            />
-            <input
-              type="text"
-              name="expiry"
-              placeholder="Valid Thru"
-              onChange={this.handleInputChange}
-              onFocus={this.handleInputFocus}
-            />
-            <input
-              type="tel"
-              name="cvc"
-              placeholder="CVC"
-              onChange={this.handleInputChange}
-              onFocus={this.handleInputFocus}
-            />
-            <Button type="submit">FINALIZAR PAGAMENTO</Button>
-          </Form>
-        </CardContainer>
-      );
-    }
+  function handleSubmit() {
+    const cardData = {
+      cvc,
+      expiry,
+      name,
+      number
+    };
+    console.log(cardData);
+  }
+
+  return (
+    <CardContainer>
+      <Cards
+        cvc={cvc}
+        expiry={expiry}
+        focused={focus}
+        name={name}
+        number={number}
+      />
+      <Form onSubmit={handleSubmit}>
+        <input
+          type="tel"
+          name="number"
+          placeholder="Card Number"
+          onChange={e => setNumber(e.target.value)}
+          onFocus={e => setFocus(e.target.name)}
+        />
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          onChange={e => setName(e.target.value)}
+          onFocus={e => setFocus(e.target.name)}
+        />
+        <input
+          type="text"
+          name="expiry"
+          placeholder="Valid Thru"
+          onChange={e => setExpiry(e.target.value)}
+          onFocus={e => setFocus(e.target.name)}
+        />
+        <input
+          type="tel"
+          name="cvc"
+          placeholder="CVC"
+          onChange={e => setCvc(e.target.value)}
+          onFocus={e => setFocus(e.target.name)}
+        />
+        <Button type="submit">FINALIZAR PAGAMENTO</Button>
+      </Form>
+    </CardContainer>
+  );
 }
 
 const CardContainer = styled.div`

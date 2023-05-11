@@ -3,20 +3,18 @@ import useToken from '../useToken';
 
 import * as paymentApi from '../../services/paymentApi';
 
-export default function usePayment() {
+export default function useSavePayment() {
   const token = useToken();
   
   const {
-    data: payment,
-    loading: paymentLoading,
-    error: paymentError,
+    loading: savePaymentsLoading,
+    error: savePaymentsError,
     act: processPayment
-  } = useAsync(() => paymentApi.getPayment(token));
+  } = useAsync((data) => paymentApi.processPayment(data, token), false);
 
   return {
-    payment,
-    paymentLoading,
-    paymentError,
+    savePaymentsLoading,
+    savePaymentsError,
     processPayment
   };
 }

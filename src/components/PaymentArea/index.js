@@ -24,14 +24,14 @@ export default function PaymentArea() {
         <p>R$ {ticketPrice}</p>
       </TicketData>
       <Subtitle>Pagamento</Subtitle>
-      <PaymentConfirmed>
+      {/* <PaymentConfirmed>
         <img src={check} alt='check-icon'/>
         <div>
           <p>Pagamento confirmado!</p>
           <p>Prossiga para escolha de hospedagem e atividades</p>
         </div>
-      </PaymentConfirmed>
-      {/* <PaymentForm /> */}
+      </PaymentConfirmed> */}
+      <PaymentForm />
     </PaymentContainer>
   );
 }
