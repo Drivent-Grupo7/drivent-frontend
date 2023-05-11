@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import useTicket from '../../hooks/api/useTicket';
 import { useEffect, useState } from 'react';
+import PaymentForm from './PaymentForm';
 
 export default function PaymentArea() {
   const { ticket } = useTicket();
@@ -22,7 +23,7 @@ export default function PaymentArea() {
         <p>R$ {ticketPrice}</p>
       </TicketData>
       <Subtitle>Pagamento</Subtitle>
-      <PaymentData></PaymentData>
+      <PaymentForm />
     </PaymentContainer>
   );
 }
@@ -40,8 +41,8 @@ const Subtitle = styled.div`
   font-size: 20px;
   line-height: 23px;
   color: #8E8E8E;
-  margin-top: 20px;
-  margin-bottom: 17px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 `;
 
 const TicketData = styled.div`
@@ -67,8 +68,4 @@ const TicketData = styled.div`
     font-size: 14px;
     margin-top: 8px;
   }
-`;
-
-const PaymentData = styled.div`
-
 `;
