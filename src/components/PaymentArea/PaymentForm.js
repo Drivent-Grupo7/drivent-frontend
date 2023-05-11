@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
+import { useForm } from '../../hooks/useForm';
+import { toast } from 'react-toastify';
+import usePayment from '../../hooks/api/usePayment';
+import useSavePayment from '../../hooks/api/useSavePayment';
+import PaymentFormValidations from '../../components/PaymentArea/PaymentFormValidations';
 
 export default function PaymentForm() {
   const [number, setNumber] = useState('');
@@ -9,16 +14,39 @@ export default function PaymentForm() {
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
   const [focus, setFocus] = useState('');
+  const { payment } = usePayment();
+  const { savePaymentLoading, processPayment } = useSavePayment();
 
-  function handleSubmit() {
-    const cardData = {
-      cvc,
-      expiry,
-      name,
-      number
-    };
-    console.log(cardData);
-  }
+  const {
+    handleSubmit,
+    data
+  } = useForm({
+    validations: PaymentFormValidations,
+
+    onSubmit: async(data) => {
+      const newData = {
+        cvc: data.cvc,
+        expiry: data.expiry,
+        name: data.cardName,
+        number: data.cardNumber,
+      };
+
+      try {
+        await processPayment(newData);
+        console.log(newData);
+        toast('Pagamento realizado com sucesso!');
+      } catch (err) {
+        toast('Não foi possível srealizar seu pagamento!');
+      }
+    },
+
+    initialValues: {
+      cardNumber: '',
+      cardName: '',
+      expiry: '',
+      cvc: '',
+    },
+  });
 
   return (
     <CardContainer>
