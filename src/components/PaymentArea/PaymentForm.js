@@ -13,19 +13,25 @@ export default function PaymentForm() {
   const [focus, setFocus] = useState('');
   const { savePayment, savePaymentLoading } = useSavePayment();
 
+  const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
+
   async function handleSubmit() {
-    try {
-      const data = {
-        cardNumber,
-        cardName,
-        expiry,
-        cvc
-      };
-      await savePayment(data);
-      console.log(data);
-      toast('Pagamento realizado com sucesso!');
-    } catch (err) {
-      toast('Não foi possível realizar seu pagamento!');
+    if(validation) {
+      try {
+        const data = {
+          number: cardNumber,
+          name: cardName,
+          expiry,
+          cvc
+        };
+        await savePayment(data);
+        console.log(data);
+        toast('Pagamento realizado com sucesso!');
+      } catch (err) {
+        toast('Não foi possível realizar seu pagamento!');
+      }
+    } else {
+      toast('Preencha os dados corretamente!');
     }
   }
 
