@@ -10,6 +10,16 @@ export async function save(body, token) {
   return response.data;
 }
 
+export async function update(bookingId, body, token) {
+  const response = await api.put(`/booking/${bookingId}`, body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+
 export async function getHotels(token) {
   const response = await api.get('/hotels', {
     headers: {
@@ -20,7 +30,7 @@ export async function getHotels(token) {
   return response.data;
 }
 
-export async function getHotelsWithRooms(token, hotelId) {
+export async function getHotelsWithRooms(hotelId, token) {
   const response = await api.get(`/hotels/${hotelId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -30,8 +40,18 @@ export async function getHotelsWithRooms(token, hotelId) {
   return response.data;
 }
 
-export async function getBookingByHotelId(token, hotelId) {
+export async function getBookingByHotelId(hotelId, token) {
   const response = await api.get(`/booking/${hotelId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function getBookingByUserId(token) {
+  const response = await api.get('/booking', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
