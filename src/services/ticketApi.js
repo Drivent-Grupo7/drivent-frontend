@@ -1,14 +1,14 @@
 import api from './api';
 
-// export async function save(body, token) {
-//   const response = await api.post('/enrollments', body, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
+export async function save(body, token) {
+  const response = await api.post('/ticket', body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-//   return response.data;
-// }
+  return response.data;
+}
 
 export async function getTicket(token) {
   const response = await api.get('/tickets', {
