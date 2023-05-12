@@ -10,12 +10,12 @@ export default function useSavePayment() {
   const {
     loading: savePaymentsLoading,
     error: savePaymentsError,
-    act: processPayment
-  } = useAsync((data) => paymentApi.processPayment(ticket.id, data, token), false);
+    act: savePayment
+  } = useAsync((data) => paymentApi.processPayment(data, ticket.id, token), false);
 
   return {
     savePaymentsLoading,
     savePaymentsError,
-    processPayment
+    savePayment
   };
-}
+} 

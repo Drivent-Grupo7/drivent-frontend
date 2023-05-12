@@ -3,18 +3,24 @@ import useTicket from '../../hooks/api/useTicket';
 import { useEffect, useState } from 'react';
 import PaymentForm from './PaymentForm';
 import check from '../../assets/images/check.png';
+import usePayment from '../../hooks/api/usePayment';
 
 export default function PaymentArea() {
   const { ticket } = useTicket();
   const [ ticketName, setTicketName ] = useState('Carregando...');
   const [ ticketPrice, setTicketPrice ] = useState('');
+  const [ confirmedPayment, setConfirmedPayment ] = useState(false);
+  const { payment } = usePayment();
 
   useEffect(() => {
     if(ticket) {
       setTicketName(ticket.TicketType.name);
       setTicketPrice(ticket.TicketType.price);
     }
-  }, [ticket]);
+    if(payment) {
+      setConfirmedPayment(true);
+    }
+  }, [ticket, payment]);
 
   return (
     <PaymentContainer>
@@ -24,14 +30,15 @@ export default function PaymentArea() {
         <p>R$ {ticketPrice}</p>
       </TicketData>
       <Subtitle>Pagamento</Subtitle>
-      {/* <PaymentConfirmed>
-        <img src={check} alt='check-icon'/>
-        <div>
-          <p>Pagamento confirmado!</p>
-          <p>Prossiga para escolha de hospedagem e atividades</p>
-        </div>
-      </PaymentConfirmed> */}
-      <PaymentForm />
+      {confirmedPayment? 
+        <PaymentConfirmed>
+          <img src={check} alt='check-icon'/>
+          <div>
+            <p>Pagamento confirmado!</p>
+            <p>Prossiga para escolha de hospedagem e atividades</p>
+          </div>
+        </PaymentConfirmed> : <PaymentForm />}
+      {/* <PaymentForm /> */}
     </PaymentContainer>
   );
 }

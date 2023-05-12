@@ -2,51 +2,32 @@ import React, { useState } from 'react';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
-import { useForm } from '../../hooks/useForm';
 import { toast } from 'react-toastify';
-import usePayment from '../../hooks/api/usePayment';
 import useSavePayment from '../../hooks/api/useSavePayment';
-import PaymentFormValidations from '../../components/PaymentArea/PaymentFormValidations';
 
 export default function PaymentForm() {
-  const [number, setNumber] = useState('');
-  const [name, setName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
   const [focus, setFocus] = useState('');
-  const { payment } = usePayment();
-  const { savePaymentLoading, processPayment } = useSavePayment();
+  const { savePayment, savePaymentLoading } = useSavePayment();
 
-  const {
-    handleSubmit,
-    data
-  } = useForm({
-    validations: PaymentFormValidations,
-
-    onSubmit: async(data) => {
-      const newData = {
-        cvc: data.cvc,
-        expiry: data.expiry,
-        name: data.cardName,
-        number: data.cardNumber,
+  async function handleSubmit() {
+    try {
+      const data = {
+        cardNumber,
+        cardName,
+        expiry,
+        cvc
       };
-
-      try {
-        await processPayment(newData);
-        console.log(newData);
-        toast('Pagamento realizado com sucesso!');
-      } catch (err) {
-        toast('Não foi possível srealizar seu pagamento!');
-      }
-    },
-
-    initialValues: {
-      cardNumber: '',
-      cardName: '',
-      expiry: '',
-      cvc: '',
-    },
-  });
+      await savePayment(data);
+      console.log(data);
+      toast('Pagamento realizado com sucesso!');
+    } catch (err) {
+      toast('Não foi possível realizar seu pagamento!');
+    }
+  }
 
   return (
     <CardContainer>
@@ -54,22 +35,22 @@ export default function PaymentForm() {
         cvc={cvc}
         expiry={expiry}
         focused={focus}
-        name={name}
-        number={number}
+        name={cardName}
+        number={cardNumber}
       />
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={() => handleSubmit()}>
         <input
           type="tel"
           name="number"
           placeholder="Card Number"
-          onChange={e => setNumber(e.target.value)}
+          onChange={e => setCardNumber(e.target.value)}
           onFocus={e => setFocus(e.target.name)}
         />
         <input
           type="text"
           name="name"
           placeholder="Name"
-          onChange={e => setName(e.target.value)}
+          onChange={e => setCardName(e.target.value)}
           onFocus={e => setFocus(e.target.name)}
         />
         <input
@@ -86,7 +67,7 @@ export default function PaymentForm() {
           onChange={e => setCvc(e.target.value)}
           onFocus={e => setFocus(e.target.name)}
         />
-        <Button type="submit">FINALIZAR PAGAMENTO</Button>
+        <Button type="submit" disabled={savePaymentLoading}>FINALIZAR PAGAMENTO</Button>
       </Form>
     </CardContainer>
   );
