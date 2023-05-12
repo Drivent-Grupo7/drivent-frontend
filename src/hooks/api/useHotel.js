@@ -19,6 +19,22 @@ export function useSaveBooking() {
   };
 }
 
+export function useUpdateBooking() {
+  const token = useToken();
+
+  const {
+    loading: updateBookingLoading,
+    error: updateBookingError,
+    act: updateBooking
+  } = useAsync((bookingId, data) => hotelApi.update(bookingId, data, token), false);
+
+  return {
+    updateBookingLoading,
+    updateBookingError,
+    updateBooking
+  };
+}
+
 export function useHotel() {
   const token = useToken();
   
@@ -45,7 +61,7 @@ export function useHotelWithRooms(hotelId) {
     loading: hotelWithRoomLoading,
     error: hotelWithRoomError,
     act: getHotelWithRoom
-  } = useAsync(() => hotelApi.getHotelsWithRooms(token, hotelId));
+  } = useAsync(() => hotelApi.getHotelsWithRooms(hotelId, token));
 
   return {
     hotelWithRoom,
@@ -54,6 +70,7 @@ export function useHotelWithRooms(hotelId) {
     getHotelWithRoom
   };
 }
+
 export function useBookingByHotelId(hotelId) {
   const token = useToken();
   
@@ -62,12 +79,30 @@ export function useBookingByHotelId(hotelId) {
     loading: bookingsByHotelLoading,
     error: bookingsByHotelError,
     act: getBookingsByHotel
-  } = useAsync(() => hotelApi.getBookingByHotelId(token, hotelId));
+  } = useAsync(() => hotelApi.getBookingByHotelId(hotelId, token));
 
   return {
     bookingsByHotel,
     bookingsByHotelLoading,
     bookingsByHotelError,
     getBookingsByHotel
+  };
+}
+
+export function useBookingByUserId() {
+  const token = useToken();
+  
+  const {
+    data: bookingsByUser,
+    loading: bookingsByUserLoading,
+    error: bookingsByUserError,
+    act: getBookingsByUser
+  } = useAsync(() => hotelApi.getBookingByUserId(token));
+
+  return {
+    bookingsByUser,
+    bookingsByUserLoading,
+    bookingsByUserError,
+    getBookingsByUser
   };
 }
