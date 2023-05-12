@@ -50,4 +50,33 @@ const Box = styled.button`
   }
 `;
 
-export { PaymentContainer, Subtitle, BoxContainer, Box };
+const Information = styled.div`
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 23px;
+  color: #8e8e8e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 50vh;
+  padding: 100px;
+`;
+
+const ReservedButton = styled.button`
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000000;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border: none;
+  border-radius: 4px;
+  height: 30px;
+  width: 145px;
+  cursor: pointer;
+`;
+
+export { PaymentContainer, Subtitle, BoxContainer, Box, Information, ReservedButton };
