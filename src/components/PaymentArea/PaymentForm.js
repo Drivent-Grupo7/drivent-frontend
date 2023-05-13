@@ -4,6 +4,7 @@ import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import useSavePayment from '../../hooks/api/useSavePayment';
+import useTicket from '../../hooks/api/useTicket';
 
 export default function PaymentForm() {
   const [cardNumber, setCardNumber] = useState('');
@@ -12,20 +13,29 @@ export default function PaymentForm() {
   const [cvc, setCvc] = useState('');
   const [focus, setFocus] = useState('');
   const { savePayment, savePaymentLoading } = useSavePayment();
+  const { ticket } = useTicket();
 
   const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
 
+  console.log(cardName);
+
   async function handleSubmit() {
+    console.log('entrei no handle');
     if(validation) {
+      console.log('entrei no if');
       try {
         const data = {
-          number: cardNumber,
-          name: cardName,
-          expiry,
-          cvc
+          ticketId: ticket.id,
+          cardData: {
+            issuer: 'Visa',
+            number: cardNumber,
+            name: cardName,
+            expirationDate: expiry,
+            cvc: cvc,
+          }
         };
         await savePayment(data);
-        console.log(data);
+        console.log('dados do cartao', data);
         toast('Pagamento realizado com sucesso!');
       } catch (err) {
         toast('Não foi possível realizar seu pagamento!');
@@ -44,7 +54,7 @@ export default function PaymentForm() {
         name={cardName}
         number={cardNumber}
       />
-      <Form onSubmit={() => handleSubmit()}>
+      <Form onSubmit={handleSubmit}>
         <input
           type="tel"
           name="number"
