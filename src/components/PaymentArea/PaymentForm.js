@@ -14,24 +14,39 @@ export default function PaymentForm() {
   const [focus, setFocus] = useState('');
   const { savePayment, savePaymentLoading } = useSavePayment();
   const { ticket } = useTicket();
+  let issuer = '';
 
   const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
 
-  console.log(cardName);
+  async function handleIssuer(cardNumber) {
+    const visaRegex = /^4/;
+    const mastercardRegex = /^5[1-5]/;
+    const amexRegex = /^3[47]/;
+    const discoverRegex = /^(6011|65|64[4-9])/;
+  
+    if(visaRegex.test(cardNumber)) issuer = 'Visa';
+    if(mastercardRegex.test(cardNumber)) issuer = 'Mastercard';
+    if(amexRegex.test(cardNumber)) issuer = 'American Express';
+    if(discoverRegex.test(cardNumber)) issuer = 'Discover';
+  }
 
-  async function handleSubmit() {
+  async function handleSubmit(event) {
+    event.preventDefault();
+
     console.log('entrei no handle');
+    await handleIssuer(cardNumber);
+    
     if(validation) {
       console.log('entrei no if');
       try {
         const data = {
           ticketId: ticket.id,
           cardData: {
-            issuer: 'Visa',
+            issuer,
             number: cardNumber,
             name: cardName,
             expirationDate: expiry,
-            cvc: cvc,
+            cvc,
           }
         };
         await savePayment(data);
