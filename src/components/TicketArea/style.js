@@ -65,7 +65,7 @@ const Information = styled.div`
   padding: 100px;
 `;
 
-const ReservedButton = styled.button`
+const ReserveButton = styled.button`
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
   line-height: 16px;
@@ -79,4 +79,4 @@ const ReservedButton = styled.button`
   cursor: pointer;
 `;
 
-export { PaymentContainer, Subtitle, BoxContainer, Box, Information, ReservedButton };
+export { PaymentContainer, Subtitle, BoxContainer, Box, Information, ReserveButton };
