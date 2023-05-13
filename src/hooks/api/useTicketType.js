@@ -20,3 +20,19 @@ export default function useTicketType() {
     getTicketTypes,
   };
 }
+
+export function useSaveReserve() {
+  const token = useToken();
+
+  const {
+    loading: saveReserveLoading,
+    error: saveReserveError,
+    act: saveReserve,
+  } = useAsync((data) => ticketApi.save(data, token), false);
+
+  return {
+    saveReserveLoading,
+    saveReserveError,
+    saveReserve,
+  };
+}

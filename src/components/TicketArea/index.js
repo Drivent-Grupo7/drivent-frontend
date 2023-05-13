@@ -6,6 +6,8 @@ import useEnrollment from '../../hooks/api/useEnrollment';
 import UserContext from '../../contexts/UserContext';
 import { useContext } from 'react';
 import { WithOrWithoutHotel } from './WithOrWithoutHotel';
+import { useSaveReserve } from '../../hooks/api/useTicketType';
+import { toast } from 'react-toastify';
 
 export default function TicketArea() {
   const token = useToken();
@@ -15,20 +17,17 @@ export default function TicketArea() {
   const { userData: user } = useContext(UserContext);
   const { ticketTypes } = useTicketType();
   const { enrollment } = useEnrollment();
+  const [clicked, setClicked] = useState();
+  const { saveReserve, saveReserveLoading } = useSaveReserve();
 
-  console.log(ticketTypes);
+  useEffect(() => {
+    let ticketTypeArray = [];
 
-  //     setTicketTypeData(ticketType);
-
-  //     console.log("")
-  //   } catch (err) {
-  //     return 'Ops, ocorreu um erro!';
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getTicketType();
-  // }, []);
+    if (ticketTypes) {
+      ticketTypeArray = ticketTypes.filter((item) => item.isRemote);
+      setClicked(ticketTypeArray[0].id);
+    }
+  }, [ticketTypes]);
 
   const handleButtonClick = (type) => {
     if (type === 'inPerson') {
@@ -39,6 +38,18 @@ export default function TicketArea() {
       setRemote(!remote);
     }
   };
+
+  async function reserve() {
+    try {
+      const data = {
+        ticketTypeId: clicked,
+      };
+      await saveReserve(data);
+      toast('Informações salvas com sucesso!');
+    } catch (err) {
+      toast('Não foi possível salvar suas informações!');
+    }
+  }
 
   if (enrollment) {
     return (
@@ -59,8 +70,12 @@ export default function TicketArea() {
         {inPerson ? <WithOrWithoutHotel /> : <></>}
         {remote ? (
           <>
-            <S.Subtitle>Fechado! O total ficou R$ 100,00. Agora é só confirmar: </S.Subtitle>
-            <S.ReservedButton>Reservar Ingresso</S.ReservedButton>
+            <S.Subtitle>
+              Fechado! O total ficou <strong>R$ 100,00</strong>. Agora é só confirmar:{' '}
+            </S.Subtitle>
+            <S.ReserveButton disabled={saveReserveLoading} onClick={() => reserve()}>
+              Reservar Ingresso
+            </S.ReserveButton>
           </>
         ) : (
           <></>
