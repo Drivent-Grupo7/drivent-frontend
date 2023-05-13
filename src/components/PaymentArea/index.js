@@ -1,23 +1,25 @@
 import styled from 'styled-components';
 import useTicket from '../../hooks/api/useTicket';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import PaymentForm from './PaymentForm';
 import check from '../../assets/images/check.png';
 import usePayment from '../../hooks/api/usePayment';
+import UserContext from '../../contexts/UserContext';
 
 export default function PaymentArea() {
   const { ticket } = useTicket();
   const [ ticketName, setTicketName ] = useState('Carregando...');
   const [ ticketPrice, setTicketPrice ] = useState('');
-  const [ confirmedPayment, setConfirmedPayment ] = useState(false);
+  const { confirmedPayment, setConfirmedPayment } = useContext(UserContext);
   const { payment } = usePayment();
 
   useEffect(() => {
-    if(ticket && payment) {
+    if(ticket) {
       setTicketName(ticket.TicketType.name);
       setTicketPrice(ticket.TicketType.price);
-      setConfirmedPayment(true);
     }
+
+    if(payment) setConfirmedPayment(true);
   }, [ticket, payment]);
 
   return (
