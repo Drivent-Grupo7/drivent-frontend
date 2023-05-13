@@ -61,6 +61,7 @@ export default function PersonalInformationForm() {
       try {
         await saveEnrollment(newData);
         toast('Informações salvas com sucesso!');
+        toast('Prossiga para escolha do ingresso');
       } catch (err) {
         toast('Não foi possível salvar suas informações!');
       }

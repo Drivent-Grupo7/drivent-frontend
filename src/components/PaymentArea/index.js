@@ -9,7 +9,7 @@ export default function PaymentArea() {
   const { ticket } = useTicket();
   const [ ticketName, setTicketName ] = useState('Carregando...');
   const [ ticketPrice, setTicketPrice ] = useState('');
-  const { confirmedPayment, setConfirmedPayment } = useContext(UserContext);
+  const { confirmedPayment } = useContext(UserContext);
 
   useEffect(() => {
     if(ticket) {

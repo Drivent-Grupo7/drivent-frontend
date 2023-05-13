@@ -19,6 +19,7 @@ export default function TicketArea() {
   const { enrollment } = useEnrollment();
   const [clicked, setClicked] = useState();
   const { saveReserve, saveReserveLoading } = useSaveReserve();
+  const { setHaveTicket } = useContext(UserContext);
 
   useEffect(() => {
     let ticketTypeArray = [];
@@ -45,9 +46,10 @@ export default function TicketArea() {
         ticketTypeId: clicked,
       };
       await saveReserve(data);
-      toast('Informações salvas com sucesso!');
+      toast('Ticket reservado com sucesso!');
+      setHaveTicket(true);
     } catch (err) {
-      toast('Não foi possível salvar suas informações!');
+      toast('Não foi possível reservar seu ticket!');
     }
   }
 
