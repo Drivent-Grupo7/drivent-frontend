@@ -18,7 +18,7 @@ export default function PaymentArea() {
       setTicketPrice(ticket.TicketType.price);
       setConfirmedPayment(true);
     }
-  }, [ticket]);
+  }, [ticket, payment]);
 
   return (
     <PaymentContainer>
