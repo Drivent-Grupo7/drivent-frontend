@@ -4,6 +4,7 @@ import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import useSavePayment from '../../hooks/api/useSavePayment';
+import useTicket from '../../hooks/api/useTicket';
 
 export default function PaymentForm() {
   const [cardNumber, setCardNumber] = useState('');
@@ -12,20 +13,44 @@ export default function PaymentForm() {
   const [cvc, setCvc] = useState('');
   const [focus, setFocus] = useState('');
   const { savePayment, savePaymentLoading } = useSavePayment();
+  const { ticket } = useTicket();
+  let issuer = '';
 
   const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
 
-  async function handleSubmit() {
+  async function handleIssuer(cardNumber) {
+    const visaRegex = /^4/;
+    const mastercardRegex = /^5[1-5]/;
+    const amexRegex = /^3[47]/;
+    const discoverRegex = /^(6011|65|64[4-9])/;
+  
+    if(visaRegex.test(cardNumber)) issuer = 'Visa';
+    if(mastercardRegex.test(cardNumber)) issuer = 'Mastercard';
+    if(amexRegex.test(cardNumber)) issuer = 'American Express';
+    if(discoverRegex.test(cardNumber)) issuer = 'Discover';
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    console.log('entrei no handle');
+    await handleIssuer(cardNumber);
+    
     if(validation) {
+      console.log('entrei no if');
       try {
         const data = {
-          number: cardNumber,
-          name: cardName,
-          expiry,
-          cvc
+          ticketId: ticket.id,
+          cardData: {
+            issuer,
+            number: cardNumber,
+            name: cardName,
+            expirationDate: expiry,
+            cvc,
+          }
         };
         await savePayment(data);
-        console.log(data);
+        console.log('dados do cartao', data);
         toast('Pagamento realizado com sucesso!');
       } catch (err) {
         toast('Não foi possível realizar seu pagamento!');
@@ -44,7 +69,7 @@ export default function PaymentForm() {
         name={cardName}
         number={cardNumber}
       />
-      <Form onSubmit={() => handleSubmit()}>
+      <Form onSubmit={handleSubmit}>
         <input
           type="tel"
           name="number"
