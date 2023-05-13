@@ -11,7 +11,7 @@ export async function processPayment(body, token) {
 }
 
 export async function getPayment(ticketId, token) {
-  const response = await api.get(`/payments?${ticketId}`, {
+  const response = await api.get(`/payments?ticketId=${ticketId}`, {
     headers: { 
       Authorization: `Bearer ${token}`, 
     },

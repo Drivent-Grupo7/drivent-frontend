@@ -13,14 +13,12 @@ export default function PaymentArea() {
   const { payment } = usePayment();
 
   useEffect(() => {
-    if(ticket) {
+    if(ticket && payment) {
       setTicketName(ticket.TicketType.name);
       setTicketPrice(ticket.TicketType.price);
-    }
-    if(payment) {
       setConfirmedPayment(true);
     }
-  }, [ticket, payment]);
+  }, [ticket]);
 
   return (
     <PaymentContainer>
@@ -38,7 +36,6 @@ export default function PaymentArea() {
             <p>Prossiga para escolha de hospedagem e atividades</p>
           </div>
         </PaymentConfirmed> : <PaymentForm />}
-      {/* <PaymentForm /> */}
     </PaymentContainer>
   );
 }

@@ -1,7 +1,6 @@
 import useAsync from '../useAsync';
 import useToken from '../useToken';
 import * as paymentApi from '../../services/paymentApi';
-import useTicket from './useTicket';
 
 export default function useSavePayment() {
   const token = useToken();
