@@ -50,6 +50,7 @@ export function WithOrWithoutHotel() {
       };
       await saveReserve(data);
       toast('Informações salvas com sucesso!');
+      window.location.reload();
     } catch (err) {
       toast('Não foi possível salvar suas informações!');
     }

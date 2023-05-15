@@ -48,6 +48,7 @@ export default function TicketArea() {
       await saveReserve(data);
       toast('Ticket reservado com sucesso!');
       setHaveTicket(true);
+      window.location.reload();
     } catch (err) {
       toast('Não foi possível reservar seu ticket!');
     }
