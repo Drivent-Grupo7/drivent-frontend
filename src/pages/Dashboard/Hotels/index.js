@@ -86,7 +86,7 @@ export default function Hotels() {
     }
   }
   if (bookingsByUserLoading) {
-    return (<>Loaading</>);
+    return (<>Loading</>);
   } else if (bookingsByUser && !update) {
     return (
       <Container>

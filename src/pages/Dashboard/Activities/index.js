@@ -4,14 +4,14 @@ import styled from 'styled-components';
 
 export default function Activities() {
   const { ticket } = useTicket();
-  const [ message, setMessage ] = useState('Carregando...');
+  const [ message, setMessage ] = useState('Em breve!');
 
   useEffect(() => {
     if(ticket) {
       if(ticket.status === 'RESERVED') {
         setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de atividades');
       }
-      if(ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+      if(ticket.TicketType.isRemote) {
         setMessage('Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades');
       }
     }
