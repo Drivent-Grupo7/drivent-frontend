@@ -16,7 +16,7 @@ export default function PaymentForm() {
   const { savePayment, savePaymentLoading } = useSavePayment();
   const { setConfirmedPayment } = useContext(UserContext);
   const { ticket } = useTicket();
-  let issuer = '';
+  let issuer = 'Emissora';
 
   const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
 
