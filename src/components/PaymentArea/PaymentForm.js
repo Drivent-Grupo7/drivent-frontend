@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import useSavePayment from '../../hooks/api/useSavePayment';
 import useTicket from '../../hooks/api/useTicket';
 import UserContext from '../../contexts/UserContext';
+import revealCard from 'credit-card-reveal';
 
 export default function PaymentForm() {
   const [cardNumber, setCardNumber] = useState('');
@@ -16,25 +17,12 @@ export default function PaymentForm() {
   const { savePayment, savePaymentLoading } = useSavePayment();
   const { setConfirmedPayment } = useContext(UserContext);
   const { ticket } = useTicket();
-  let issuer = '';
 
+  let issuer = revealCard(cardNumber);
   const validation = cardNumber.length === 16 && cardName.length >= 3 && expiry.length === 4 && cvc.length === 3;
-
-  async function handleIssuer(cardNumber) {
-    const visaRegex = /^4/;
-    const mastercardRegex = /^5[1-5]/;
-    const amexRegex = /^3[47]/;
-    const discoverRegex = /^(6011|65|64[4-9])/;
-  
-    if(visaRegex.test(cardNumber)) issuer = 'Visa';
-    if(mastercardRegex.test(cardNumber)) issuer = 'Mastercard';
-    if(amexRegex.test(cardNumber)) issuer = 'American Express';
-    if(discoverRegex.test(cardNumber)) issuer = 'Discover';
-  }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await handleIssuer(cardNumber);
     
     if(validation) {
       try {
