@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import useTicket from '../../../hooks/api/useTicket';
 import styled from 'styled-components';
+import ActivitiesDayContent from '../../../components/Dashboard/Activities/ActivityDay';
 
 export default function Activities() {
   const { ticket } = useTicket();
   const [message, setMessage] = useState('');
   const [reservedTicket, setReservedTicket] = useState(true);
   const [selectedButton, setSelectedButton] = useState(null);
+  const [contentToShow, setContentToShow] = useState('');
+  const [newConfig, setNewConfig] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -28,6 +31,29 @@ export default function Activities() {
   function SelectDay(event) {
     const index = parseInt(event.target.dataset.index);
     setSelectedButton(index);
+
+    let content = '';
+    switch (index) {
+    case 0:
+      content = <ActivitiesDayContent/>;
+      setNewConfig(true);
+      break;
+
+    case 1:
+      content = <ActivitiesDayContent/>;
+      setNewConfig(true);
+      break;
+
+    case 2:
+      content = <ActivitiesDayContent/>;
+      setNewConfig(true);
+      break;
+
+    default:
+      content = '';
+    }
+
+    setContentToShow(content);
   }
 
   return (
@@ -36,13 +62,13 @@ export default function Activities() {
       <Erro>{message}</Erro>
 
       <Conteudo reservedTicket={reservedTicket}>
-        <SubTitulo>Primeiro, filtre pelo dia do evento:</SubTitulo>
+        <SubTitulo newConfig={newConfig}>Primeiro, filtre pelo dia do evento:</SubTitulo>
 
-        <CaixaBotoes>
+        <CaixaBotoes newConfig={newConfig}>
           <button
             onClick={SelectDay}
             data-index={0}
-            style={{ backgroundColor: selectedButton === 0 ? 'orange' : '#E0E0E0' }}
+            style={{ backgroundColor: selectedButton === 0 ? '#FFD37D' : '#E0E0E0' }}
           >
             Sexta, 22/10
           </button>
@@ -50,7 +76,7 @@ export default function Activities() {
           <button
             onClick={SelectDay}
             data-index={1}
-            style={{ backgroundColor: selectedButton === 1 ? 'orange' : '#E0E0E0' }}
+            style={{ backgroundColor: selectedButton === 1 ? '#FFD37D' : '#E0E0E0' }}
           >
             Sábado, 23/10
           </button>
@@ -58,11 +84,13 @@ export default function Activities() {
           <button
             onClick={SelectDay}
             data-index={2}
-            style={{ backgroundColor: selectedButton === 2 ? 'orange' : '#E0E0E0' }}
+            style={{ backgroundColor: selectedButton === 2 ? '#FFD37D' : '#E0E0E0' }}
           >
             Domingo, 24/10
           </button>
         </CaixaBotoes>
+
+        {contentToShow && <ConteudoSelecionado>{contentToShow}</ConteudoSelecionado>}
       </Conteudo>
     </Container>
   );
@@ -101,7 +129,8 @@ const SubTitulo = styled.div`
   text-align: center;
   color: #8e8e8e;
   position: relative;
-  top: -490px;
+  top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
+  margin-bottom: 27px;
   margin-bottom: 23px;
   width: 60%;
 `;
@@ -111,6 +140,8 @@ const CaixaBotoes = styled.div`
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  margin-top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
+  margin-bottom: 40px;
   button {
     width: 131px;
     height: 37px;
@@ -120,7 +151,9 @@ const CaixaBotoes = styled.div`
     text-align: center;
     border: none;
     margin-right: 17px;
-    margin-top: -890px;
+    &:hover{
+      cursor: pointer;
+    }
   }
   p {
     width: 79px;
@@ -141,4 +174,11 @@ const Erro = styled.div`
   margin-bottom: auto;
   align-self: center;
   width: 60%;
+`;
+
+const ConteudoSelecionado = styled.div`
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
 `;
