@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import useTicket from '../../../hooks/api/useTicket';
 import styled from 'styled-components';
-import ActivitiesDayContent from '../../../components/Dashboard/Activities/ActivityDay';
+import { ActivitiesDayContentOne } from '../../../components/Dashboard/Activities/ActivityDay';
+import { ActivitiesDayContentTwo } from '../../../components/Dashboard/Activities/ActivityDay';
+import { ActivitiesDayContentThree } from '../../../components/Dashboard/Activities/ActivityDay';
+import useToken from '../../../hooks/useToken';
+import * as activityApi from '../../../services/activityApi';
 
 export default function Activities() {
   const { ticket } = useTicket();
@@ -10,6 +14,9 @@ export default function Activities() {
   const [selectedButton, setSelectedButton] = useState(null);
   const [contentToShow, setContentToShow] = useState('');
   const [newConfig, setNewConfig] = useState(false);
+  const token = useToken();
+  const dates = activityApi.listDates(token);
+  const [showDates, setShowDates] = useState([]);
 
   useEffect(() => {
     if (ticket) {
@@ -23,6 +30,7 @@ export default function Activities() {
         setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de atividades');
       } else {
         setReservedTicket(false);
+        dates.then((res) => setShowDates(res));
         setMessage('');
       }
     }
@@ -35,18 +43,21 @@ export default function Activities() {
     let content = '';
     switch (index) {
     case 0:
-      content = <ActivitiesDayContent/>;
+      content = <ActivitiesDayContentOne />;
       setNewConfig(true);
+      setMessage('');
       break;
 
     case 1:
-      content = <ActivitiesDayContent/>;
+      content = <ActivitiesDayContentTwo />;
       setNewConfig(true);
+      setMessage('');
       break;
 
     case 2:
-      content = <ActivitiesDayContent/>;
+      content = <ActivitiesDayContentThree />;
       setNewConfig(true);
+      setMessage('');
       break;
 
     default:
@@ -65,29 +76,16 @@ export default function Activities() {
         <SubTitulo newConfig={newConfig}>Primeiro, filtre pelo dia do evento:</SubTitulo>
 
         <CaixaBotoes newConfig={newConfig}>
-          <button
-            onClick={SelectDay}
-            data-index={0}
-            style={{ backgroundColor: selectedButton === 0 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Sexta, 22/10
-          </button>
-
-          <button
-            onClick={SelectDay}
-            data-index={1}
-            style={{ backgroundColor: selectedButton === 1 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Sábado, 23/10
-          </button>
-
-          <button
-            onClick={SelectDay}
-            data-index={2}
-            style={{ backgroundColor: selectedButton === 2 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Domingo, 24/10
-          </button>
+          {showDates.map((date, i) => (
+            <button
+              key={i}
+              onClick={SelectDay}
+              data-index={i}
+              style={{ backgroundColor: selectedButton === i ? '#FFD37D' : '#E0E0E0' }}
+            >
+              {date.title}
+            </button>
+          ))}
         </CaixaBotoes>
 
         {contentToShow && <ConteudoSelecionado>{contentToShow}</ConteudoSelecionado>}
@@ -151,7 +149,7 @@ const CaixaBotoes = styled.div`
     text-align: center;
     border: none;
     margin-right: 17px;
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }

@@ -1,147 +1,588 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import openActivity from '../../../assets/images/openActivity.png';
 import closedActivity from '../../../assets/images/closedActivity.png';
 import registered from '../../../assets/images/registered.png';
+import useToken from '../../../hooks/useToken';
+import * as activityApi from '../../../services/activityApi';
 
-const activities = [
-  {
-    title: 'Minecraft: montando o PC ideal',
-    time: '09:00 - 10:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'LoL: montando o PC ideal',
-    time: '10:00 - 11:00',
-    image: closedActivity,
-    vacancies: 0,
-  },
-  {
-    title: 'Palestra x',
-    time: '09:00 - 11:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'Palestra y',
-    time: '09:00 - 10:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'Palestra z',
-    time: '10:00 - 11:00',
-    image: closedActivity,
-    vacancies: 0,
-  },
-];
-
-export default function ActivitiesDayContent() {
+export function ActivitiesDayContentOne() {
+  const token = useToken();
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showAuditoriums, setShowAuditoriums] = useState([]);
+  const [showActivities, setShowActivities] = useState([]);
 
-  const handleActivityClick = (index) => {
-    const selectedActivityHasVacancies = activities[index].vacancies > 0;
+  useEffect(() => {
+    const fetchAuditoriums = async() => {
+      const res = await activityApi.listAuditoriums(token);
+      setShowAuditoriums(res);
+    };
 
-    if (selectedActivityHasVacancies) {
-      setSelectedActivity(index === selectedActivity ? null : index);
+    const fetchActivities = async() => {
+      const res = await activityApi.listActivitiesOne(token);
+      setShowActivities(res);
+    };
+
+    fetchAuditoriums();
+    fetchActivities();
+  }, [token]);
+
+  const handleActivityClick = (activityId) => {
+    const clickedActivity = showActivities.find(
+      (activity) => activity.id === activityId
+    );
+
+    if (clickedActivity) {
+      setSelectedActivity((prevState) =>
+        prevState === activityId ? null : activityId
+      );
     }
   };
 
   return (
     <Container>
       <Main>
+        <Box>
+          {showAuditoriums.map((auditorium) => (
+            <ActivitesTitleBox key={auditorium.name}>
+              <PlaceOfActivity>
+                <h3>{auditorium.name}</h3>
+              </PlaceOfActivity>
+            </ActivitesTitleBox>
+          ))}
+        </Box>
         <ContentBox>
           <Content>
-            <ActivitesTitleBox>
-              <PlaceOfActivity>
-                <h3>Auditório Principal</h3>
-              </PlaceOfActivity>
-            </ActivitesTitleBox>
-
             <Activities>
-              {activities.slice(0, 2).map((activity, index) => (
-                <ActivityBox
-                  key={index}
-                  isSelected={selectedActivity === index}
-                  onClick={() => handleActivityClick(index)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 1) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
 
-                  <Participate>
-                    <img src={selectedActivity === index ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
             </Activities>
           </Content>
 
           <Content>
-            <ActivitesTitleBox>
-              <PlaceOfActivity>
-                <h3>Auditório Lateral</h3>
-              </PlaceOfActivity>
-            </ActivitesTitleBox>
-
             <Activities>
-              {activities.slice(2, 3).map((activity, index) => (
-                <ActivityBox
-                  key={index + 2}
-                  isSelected={selectedActivity === index + 2}
-                  onClick={() => handleActivityClick(index + 2)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 2) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
 
-                  <Participate>
-                    <img src={selectedActivity === index + 2 ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index + 2 ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
             </Activities>
           </Content>
 
           <Content>
-            <ActivitesTitleBox>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 3) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+        </ContentBox>
+      </Main>
+    </Container>
+  );
+}
+
+export function ActivitiesDayContentTwo() {
+  const token = useToken();
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showAuditoriums, setShowAuditoriums] = useState([]);
+  const [showActivities, setShowActivities] = useState([]);
+
+  useEffect(() => {
+    const fetchAuditoriums = async() => {
+      const res = await activityApi.listAuditoriums(token);
+      setShowAuditoriums(res);
+    };
+
+    const fetchActivities = async() => {
+      const res = await activityApi.listActivitiesTwo(token);
+      setShowActivities(res);
+    };
+
+    fetchAuditoriums();
+    fetchActivities();
+  }, [token]);
+
+  const handleActivityClick = (activityId) => {
+    const clickedActivity = showActivities.find(
+      (activity) => activity.id === activityId
+    );
+
+    if (clickedActivity) {
+      setSelectedActivity((prevState) =>
+        prevState === activityId ? null : activityId
+      );
+    }
+  };
+
+  return (
+    <Container>
+      <Main>
+        <Box>
+          {showAuditoriums.map((auditorium) => (
+            <ActivitesTitleBox key={auditorium.name}>
               <PlaceOfActivity>
-                <h3>Sala de Workshop</h3>
+                <h3>{auditorium.name}</h3>
               </PlaceOfActivity>
             </ActivitesTitleBox>
-
+          ))}
+        </Box>
+        <ContentBox>
+          <Content>
             <Activities>
-              {activities.slice(3).map((activity, index) => (
-                <ActivityBox
-                  key={index + 3}
-                  isSelected={selectedActivity === index + 3}
-                  onClick={() => handleActivityClick(index + 3)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 1) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
 
-                  <Participate>
-                    <img src={selectedActivity === index + 3 ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index + 3 ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+
+          <Content>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 2) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+
+          <Content>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 3) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+        </ContentBox>
+      </Main>
+    </Container>
+  );
+}
+
+export function ActivitiesDayContentThree() {
+  const token = useToken();
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showAuditoriums, setShowAuditoriums] = useState([]);
+  const [showActivities, setShowActivities] = useState([]);
+
+  useEffect(() => {
+    const fetchAuditoriums = async() => {
+      const res = await activityApi.listAuditoriums(token);
+      setShowAuditoriums(res);
+    };
+
+    const fetchActivities = async() => {
+      const res = await activityApi.listActivitiesThree(token);
+      setShowActivities(res);
+    };
+
+    fetchAuditoriums();
+    fetchActivities();
+  }, [token]);
+
+  const handleActivityClick = (activityId) => {
+    const clickedActivity = showActivities.find(
+      (activity) => activity.id === activityId
+    );
+
+    if (clickedActivity) {
+      setSelectedActivity((prevState) =>
+        prevState === activityId ? null : activityId
+      );
+    }
+  };
+
+  return (
+    <Container>
+      <Main>
+        <Box>
+          {showAuditoriums.map((auditorium) => (
+            <ActivitesTitleBox key={auditorium.name}>
+              <PlaceOfActivity>
+                <h3>{auditorium.name}</h3>
+              </PlaceOfActivity>
+            </ActivitesTitleBox>
+          ))}
+        </Box>
+        <ContentBox>
+          <Content>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 1) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+
+          <Content>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 2) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
+            </Activities>
+          </Content>
+
+          <Content>
+            <Activities>
+              {showActivities.map((activity, index) => {
+                if (activity.auditoriumId === 3) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
+
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+
+                  return (
+                    <ActivityBox
+                      key={index}
+                      isSelected={selectedActivity === index}
+                      onClick={() => handleActivityClick(index)}
+                      disableBackground={activity.capacity === 0}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === index
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
             </Activities>
           </Content>
         </ContentBox>
@@ -263,4 +704,11 @@ const ActivitesTitleBox = styled.div`
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
+`;
+
+const Box = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
