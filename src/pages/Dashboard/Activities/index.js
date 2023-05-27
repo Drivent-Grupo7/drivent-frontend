@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import useTicket from '../../../hooks/api/useTicket';
 import styled from 'styled-components';
-import ActivitiesDayContent from '../../../components/Dashboard/Activities/ActivityDay';
+import { ActivitiesDayContent } from '../../../components/Dashboard/Activities/ActivityDay';
+import useToken from '../../../hooks/useToken';
+import * as activityApi from '../../../services/activityApi';
 
 export default function Activities() {
   const { ticket } = useTicket();
@@ -10,6 +12,9 @@ export default function Activities() {
   const [selectedButton, setSelectedButton] = useState(null);
   const [contentToShow, setContentToShow] = useState('');
   const [newConfig, setNewConfig] = useState(false);
+  const token = useToken();
+  const dates = activityApi.listDates(token);
+  const [showDates, setShowDates] = useState([]);
 
   useEffect(() => {
     if (ticket) {
@@ -23,6 +28,7 @@ export default function Activities() {
         setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de atividades');
       } else {
         setReservedTicket(false);
+        dates.then((res) => setShowDates(res));
         setMessage('');
       }
     }
@@ -31,27 +37,9 @@ export default function Activities() {
   function SelectDay(event) {
     const index = parseInt(event.target.dataset.index);
     setSelectedButton(index);
-
-    let content = '';
-    switch (index) {
-    case 0:
-      content = <ActivitiesDayContent/>;
-      setNewConfig(true);
-      break;
-
-    case 1:
-      content = <ActivitiesDayContent/>;
-      setNewConfig(true);
-      break;
-
-    case 2:
-      content = <ActivitiesDayContent/>;
-      setNewConfig(true);
-      break;
-
-    default:
-      content = '';
-    }
+    setNewConfig(true);
+    setMessage('');
+    let content = <ActivitiesDayContent dateId = {index} />;
 
     setContentToShow(content);
   }
@@ -59,35 +47,22 @@ export default function Activities() {
   return (
     <Container>
       <Titulo>Escolha de atividades</Titulo>
-      <Erro>{message}</Erro>
+      <Erro message={message}>{message}</Erro>
 
       <Conteudo reservedTicket={reservedTicket}>
         <SubTitulo newConfig={newConfig}>Primeiro, filtre pelo dia do evento:</SubTitulo>
 
         <CaixaBotoes newConfig={newConfig}>
-          <button
-            onClick={SelectDay}
-            data-index={0}
-            style={{ backgroundColor: selectedButton === 0 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Sexta, 22/10
-          </button>
-
-          <button
-            onClick={SelectDay}
-            data-index={1}
-            style={{ backgroundColor: selectedButton === 1 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Sábado, 23/10
-          </button>
-
-          <button
-            onClick={SelectDay}
-            data-index={2}
-            style={{ backgroundColor: selectedButton === 2 ? '#FFD37D' : '#E0E0E0' }}
-          >
-            Domingo, 24/10
-          </button>
+          {showDates.map((date) => (
+            <button
+              key={date.id}
+              onClick={SelectDay}
+              data-index={date.id}
+              style={{ backgroundColor: selectedButton === date.id ? '#FFD37D' : '#E0E0E0' }}
+            >
+              {date.title}
+            </button>
+          ))}
         </CaixaBotoes>
 
         {contentToShow && <ConteudoSelecionado>{contentToShow}</ConteudoSelecionado>}
@@ -114,6 +89,7 @@ const Titulo = styled.div`
   font-size: 34px;
   line-height: 40px;
   color: #000000;
+  margin-bottom: 36px;
 `;
 
 const Conteudo = styled.div`
@@ -123,14 +99,11 @@ const Conteudo = styled.div`
 `;
 
 const SubTitulo = styled.div`
-  display: flex;
+  display: ${(props) => (props.newConfig ? 'none' : 'flex')};
   font-size: 20px;
   line-height: 23px;
   text-align: center;
   color: #8e8e8e;
-  position: relative;
-  top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
-  margin-bottom: 27px;
   margin-bottom: 23px;
   width: 60%;
 `;
@@ -140,7 +113,6 @@ const CaixaBotoes = styled.div`
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  margin-top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
   margin-bottom: 40px;
   button {
     width: 131px;
@@ -151,7 +123,7 @@ const CaixaBotoes = styled.div`
     text-align: center;
     border: none;
     margin-right: 17px;
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }
@@ -166,6 +138,7 @@ const CaixaBotoes = styled.div`
 `;
 
 const Erro = styled.div`
+  display: ${(props) => (props.message.length > 0 ? 'flex' : 'none')};
   font-size: 20px;
   line-height: 23px;
   text-align: center;

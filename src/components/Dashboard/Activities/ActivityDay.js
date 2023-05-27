@@ -1,188 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import openActivity from '../../../assets/images/openActivity.png';
 import closedActivity from '../../../assets/images/closedActivity.png';
 import registered from '../../../assets/images/registered.png';
+import useToken from '../../../hooks/useToken';
+import { useActivities, useAuditoriums } from '../../../hooks/api/useActivity';
 
-const activities = [
-  {
-    title: 'Minecraft: montando o PC ideal',
-    time: '09:00 - 10:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'LoL: montando o PC ideal',
-    time: '10:00 - 11:00',
-    image: closedActivity,
-    vacancies: 0,
-  },
-  {
-    title: 'Palestra x',
-    time: '09:00 - 11:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'Palestra y',
-    time: '09:00 - 10:00',
-    image: openActivity,
-    vacancies: 27,
-  },
-  {
-    title: 'Palestra z',
-    time: '10:00 - 11:00',
-    image: closedActivity,
-    vacancies: 0,
-  },
-];
-
-export default function ActivitiesDayContent() {
+export function ActivitiesDayContent({ dateId }) {
+  const token = useToken();
+  const { auditoriums, auditoriumsLoading } = useAuditoriums();
+  const { activities, activitiesLoading, listActivities } = useActivities();
   const [selectedActivity, setSelectedActivity] = useState(null);
 
-  const handleActivityClick = (index) => {
-    const selectedActivityHasVacancies = activities[index].vacancies > 0;
+  useEffect(() => {
+    listActivities(dateId);
+  }, [token, dateId]);
 
-    if (selectedActivityHasVacancies) {
-      setSelectedActivity(index === selectedActivity ? null : index);
+  const handleActivityClick = (activityId) => {
+    const clickedActivity = activities.find(
+      (activity) => activity.id === activityId
+    );
+
+    if (clickedActivity) {
+      setSelectedActivity((prevState) =>
+        prevState === activityId ? null : activityId
+      );
     }
   };
-
-  return (
-    <Container>
-      <Main>
-        <ContentBox>
-          <Content>
-            <ActivitesTitleBox>
-              <PlaceOfActivity>
-                <h3>Auditório Principal</h3>
-              </PlaceOfActivity>
-            </ActivitesTitleBox>
-
+  if (activities && !activitiesLoading && auditoriums && !auditoriumsLoading) {
+    return (
+      <Container>
+        {auditoriums.map((auditorium) => (
+          <ActivitesTitleBox key={auditorium.name}>
+            <PlaceOfActivity>
+              <h3>{auditorium.name}</h3>
+            </PlaceOfActivity>
             <Activities>
-              {activities.slice(0, 2).map((activity, index) => (
-                <ActivityBox
-                  key={index}
-                  isSelected={selectedActivity === index}
-                  onClick={() => handleActivityClick(index)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
+              {activities.map((activity) => {
+                if (activity.auditoriumId === auditorium.id) {
+                  const startTime = activity.startsAt;
+                  const startObject = new Date(startTime);
+                  const startTimeString = startObject.toLocaleTimeString();
 
-                  <Participate>
-                    <img src={selectedActivity === index ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
+                  const endTime = activity.endsAt;
+                  const endObject = new Date(endTime);
+                  const endTimeString = endObject.toLocaleTimeString();
+                  const height = endObject.getHours() - startObject.getHours();
+                  return (
+                    <ActivityBox
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
+                      disableBackground={activity.capacity === 0}
+                      height={height}
+                    >
+                      <Activity>
+                        <h5>{activity.title}</h5>
+                        <p>
+                          {startTimeString}-{endTimeString}
+                        </p>
+                      </Activity>
+
+                      <Participate>
+                        <img
+                          src={
+                            selectedActivity === activity.id
+                              ? registered
+                              : activity.capacity === 0
+                                ? closedActivity
+                                : openActivity
+                          }
+                          alt="Activity"
+                        />
+                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
+                        </p>
+                      </Participate>
+                    </ActivityBox>
+                  );
+                }
+              })}
             </Activities>
-          </Content>
-
-          <Content>
-            <ActivitesTitleBox>
-              <PlaceOfActivity>
-                <h3>Auditório Lateral</h3>
-              </PlaceOfActivity>
-            </ActivitesTitleBox>
-
-            <Activities>
-              {activities.slice(2, 3).map((activity, index) => (
-                <ActivityBox
-                  key={index + 2}
-                  isSelected={selectedActivity === index + 2}
-                  onClick={() => handleActivityClick(index + 2)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
-
-                  <Participate>
-                    <img src={selectedActivity === index + 2 ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index + 2 ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
-            </Activities>
-          </Content>
-
-          <Content>
-            <ActivitesTitleBox>
-              <PlaceOfActivity>
-                <h3>Sala de Workshop</h3>
-              </PlaceOfActivity>
-            </ActivitesTitleBox>
-
-            <Activities>
-              {activities.slice(3).map((activity, index) => (
-                <ActivityBox
-                  key={index + 3}
-                  isSelected={selectedActivity === index + 3}
-                  onClick={() => handleActivityClick(index + 3)}
-                  disableBackground={activity.image === closedActivity || activity.vacancies === 0}
-                >
-                  <Activity>
-                    <h5>{activity.title}</h5>
-                    <p>{activity.time}</p>
-                  </Activity>
-
-                  <Participate>
-                    <img src={selectedActivity === index + 3 ? registered : activity.image} alt="Activity" />
-                    <p style={{ color: activity.vacancies === 0 ? 'red' : 'green' }}>
-                      {selectedActivity === index + 3 ? 'Inscrito' : `${activity.vacancies} vagas`}
-                    </p>
-                  </Participate>
-                </ActivityBox>
-              ))}
-            </Activities>
-          </Content>
-        </ContentBox>
-      </Main>
-    </Container>
-  );
+          </ActivitesTitleBox>
+        ))}
+      </Container>
+    );
+  } else {
+    return (<>loading</>);
+  }
 }
 
 const Container = styled.div`
-  width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Main = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ContentBox = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Content = styled.div`
-  width: 33%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #d7d7d7;
 `;
 
 const PlaceOfActivity = styled.div`
-  width: 33%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,21 +111,23 @@ const PlaceOfActivity = styled.div`
 `;
 
 const Activities = styled.div`
-  width: 100%;
+  height: 389px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  border: 1px solid #D7D7D7;
+  padding: 10px;
+  justify-content: flex-start;
   align-items: center;
 `;
 
 const ActivityBox = styled.div`
-  width: 265px;
-  height: 79px;
+  width: 250px;
+  height:  ${(props) => (props.height * 79) + (props.height === 1 ? 0 : (props.height - 1) * 10)}px;
   border-radius: 5px;
   background-color: ${(props) => (props.isSelected ? '#c3e2ff' : '#f1f1f1')};
   display: flex;
-  align-items: center;
-  margin: 10px;
+  padding: 10px;
+  margin-top: 10px;
   cursor: ${(props) => (props.disableBackground ? 'default' : 'pointer')};
   opacity: ${(props) => (props.disableBackground ? '0.5' : '1')};
 `;
@@ -222,8 +136,8 @@ const Activity = styled.div`
   width: 65%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
+  border-right: 1px solid #CFCFCF;
   h5 {
     font-weight: 500;
     font-size: 14px;
@@ -261,6 +175,7 @@ const Participate = styled.div`
 const ActivitesTitleBox = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   margin-bottom: 20px;
 `;
+
