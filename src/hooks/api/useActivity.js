@@ -20,3 +20,21 @@ export function useAuditoriums() {
     listAuditoriums,
   };
 };
+
+export function useActivities() {
+  const token = useToken();
+
+  const {
+    data: activities,
+    loading: activitiesLoading,
+    error: activitiesError,
+    act: listActivities,
+  } = useAsync((dateId) => activityApi.listActivities(token, dateId));
+
+  return {
+    activities,
+    activitiesLoading,
+    activitiesError,
+    listActivities,
+  };
+};

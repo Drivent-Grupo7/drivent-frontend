@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import useTicket from '../../../hooks/api/useTicket';
 import styled from 'styled-components';
-import { ActivitiesDayContentOne } from '../../../components/Dashboard/Activities/ActivityDay';
-import { ActivitiesDayContentTwo } from '../../../components/Dashboard/Activities/ActivityDay';
-import { ActivitiesDayContentThree } from '../../../components/Dashboard/Activities/ActivityDay';
+import { ActivitiesDayContent } from '../../../components/Dashboard/Activities/ActivityDay';
 import useToken from '../../../hooks/useToken';
 import * as activityApi from '../../../services/activityApi';
 
@@ -39,30 +37,9 @@ export default function Activities() {
   function SelectDay(event) {
     const index = parseInt(event.target.dataset.index);
     setSelectedButton(index);
-
-    let content = '';
-    switch (index) {
-    case 0:
-      content = <ActivitiesDayContentOne />;
-      setNewConfig(true);
-      setMessage('');
-      break;
-
-    case 1:
-      content = <ActivitiesDayContentTwo />;
-      setNewConfig(true);
-      setMessage('');
-      break;
-
-    case 2:
-      content = <ActivitiesDayContentThree />;
-      setNewConfig(true);
-      setMessage('');
-      break;
-
-    default:
-      content = '';
-    }
+    setNewConfig(true);
+    setMessage('');
+    let content = <ActivitiesDayContent dateId = {index} />;
 
     setContentToShow(content);
   }
@@ -70,18 +47,18 @@ export default function Activities() {
   return (
     <Container>
       <Titulo>Escolha de atividades</Titulo>
-      <Erro>{message}</Erro>
+      <Erro message={message}>{message}</Erro>
 
       <Conteudo reservedTicket={reservedTicket}>
         <SubTitulo newConfig={newConfig}>Primeiro, filtre pelo dia do evento:</SubTitulo>
 
         <CaixaBotoes newConfig={newConfig}>
-          {showDates.map((date, i) => (
+          {showDates.map((date) => (
             <button
-              key={i}
+              key={date.id}
               onClick={SelectDay}
-              data-index={i}
-              style={{ backgroundColor: selectedButton === i ? '#FFD37D' : '#E0E0E0' }}
+              data-index={date.id}
+              style={{ backgroundColor: selectedButton === date.id ? '#FFD37D' : '#E0E0E0' }}
             >
               {date.title}
             </button>
@@ -112,6 +89,7 @@ const Titulo = styled.div`
   font-size: 34px;
   line-height: 40px;
   color: #000000;
+  margin-bottom: 36px;
 `;
 
 const Conteudo = styled.div`
@@ -121,14 +99,11 @@ const Conteudo = styled.div`
 `;
 
 const SubTitulo = styled.div`
-  display: flex;
+  display: ${(props) => (props.newConfig ? 'none' : 'flex')};
   font-size: 20px;
   line-height: 23px;
   text-align: center;
   color: #8e8e8e;
-  position: relative;
-  top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
-  margin-bottom: 27px;
   margin-bottom: 23px;
   width: 60%;
 `;
@@ -138,7 +113,6 @@ const CaixaBotoes = styled.div`
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  margin-top: ${(props) => (props.newConfig ? '-200px' : '-500px')};
   margin-bottom: 40px;
   button {
     width: 131px;
@@ -164,6 +138,7 @@ const CaixaBotoes = styled.div`
 `;
 
 const Erro = styled.div`
+  display: ${(props) => (props.message.length > 0 ? 'flex' : 'none')};
   font-size: 20px;
   line-height: 23px;
   text-align: center;

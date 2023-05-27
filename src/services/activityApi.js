@@ -20,28 +20,8 @@ export async function listDates(token) {
   return response.data;
 };
 
-export async function listActivitiesOne(token) {
-  const response = await api.get('activity/1', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
-};
-
-export async function listActivitiesTwo(token) {
-  const response = await api.get('activity/2', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
-};
-
-export async function listActivitiesThree(token) {
-  const response = await api.get('activity/3', {
+export async function listActivities(token, dateId) {
+  const response = await api.get(`activity/${dateId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
