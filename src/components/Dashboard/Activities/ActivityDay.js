@@ -54,7 +54,7 @@ export function ActivitiesDayContentOne() {
         <ContentBox>
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 1) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -66,9 +66,9 @@ export function ActivitiesDayContentOne() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -81,7 +81,7 @@ export function ActivitiesDayContentOne() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -90,7 +90,7 @@ export function ActivitiesDayContentOne() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -102,7 +102,7 @@ export function ActivitiesDayContentOne() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 2) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -114,9 +114,9 @@ export function ActivitiesDayContentOne() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -129,7 +129,7 @@ export function ActivitiesDayContentOne() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -138,7 +138,7 @@ export function ActivitiesDayContentOne() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -150,7 +150,7 @@ export function ActivitiesDayContentOne() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 3) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -162,9 +162,9 @@ export function ActivitiesDayContentOne() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -177,7 +177,7 @@ export function ActivitiesDayContentOne() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -186,7 +186,7 @@ export function ActivitiesDayContentOne() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -249,7 +249,7 @@ export function ActivitiesDayContentTwo() {
         <ContentBox>
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 1) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -261,9 +261,9 @@ export function ActivitiesDayContentTwo() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -276,7 +276,7 @@ export function ActivitiesDayContentTwo() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -285,7 +285,7 @@ export function ActivitiesDayContentTwo() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -297,7 +297,7 @@ export function ActivitiesDayContentTwo() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 2) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -309,9 +309,9 @@ export function ActivitiesDayContentTwo() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -324,7 +324,7 @@ export function ActivitiesDayContentTwo() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -333,7 +333,7 @@ export function ActivitiesDayContentTwo() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -345,7 +345,7 @@ export function ActivitiesDayContentTwo() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 3) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -357,9 +357,9 @@ export function ActivitiesDayContentTwo() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -372,7 +372,7 @@ export function ActivitiesDayContentTwo() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -381,7 +381,7 @@ export function ActivitiesDayContentTwo() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -444,7 +444,7 @@ export function ActivitiesDayContentThree() {
         <ContentBox>
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 1) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -456,9 +456,9 @@ export function ActivitiesDayContentThree() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -471,7 +471,7 @@ export function ActivitiesDayContentThree() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -480,7 +480,7 @@ export function ActivitiesDayContentThree() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -492,7 +492,7 @@ export function ActivitiesDayContentThree() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 2) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -504,9 +504,9 @@ export function ActivitiesDayContentThree() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -519,7 +519,7 @@ export function ActivitiesDayContentThree() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -528,7 +528,7 @@ export function ActivitiesDayContentThree() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -540,7 +540,7 @@ export function ActivitiesDayContentThree() {
 
           <Content>
             <Activities>
-              {showActivities.map((activity, index) => {
+              {showActivities.map((activity) => {
                 if (activity.auditoriumId === 3) {
                   const startTime = activity.startsAt;
                   const startObject = new Date(startTime);
@@ -552,9 +552,9 @@ export function ActivitiesDayContentThree() {
 
                   return (
                     <ActivityBox
-                      key={index}
-                      isSelected={selectedActivity === index}
-                      onClick={() => handleActivityClick(index)}
+                      key={activity.id}
+                      isSelected={selectedActivity === activity.id}
+                      onClick={() => handleActivityClick(activity.id)}
                       disableBackground={activity.capacity === 0}
                     >
                       <Activity>
@@ -567,7 +567,7 @@ export function ActivitiesDayContentThree() {
                       <Participate>
                         <img
                           src={
-                            selectedActivity === index
+                            selectedActivity === activity.id
                               ? registered
                               : activity.capacity === 0
                                 ? closedActivity
@@ -576,7 +576,7 @@ export function ActivitiesDayContentThree() {
                           alt="Activity"
                         />
                         <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === index ? 'Inscrito' : `${activity.capacity} vagas`}
+                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
