@@ -3,6 +3,38 @@ import useToken from '../useToken';
 
 import * as activityApi from '../../services/activityApi';
 
+export function useSaveSubscription() {
+  const token = useToken();
+
+  const {
+    loading: saveSubscriptionLoading,
+    error: saveSubscriptionError,
+    act: saveSubscription
+  } = useAsync((data) => activityApi.save(data, token), false);
+
+  return {
+    saveSubscriptionLoading,
+    saveSubscriptionError,
+    saveSubscription
+  };
+}
+
+export function useDeleteSubscription() {
+  const token = useToken();
+
+  const {
+    loading: deleteSubscriptionLoading,
+    error: deleteSubscriptionError,
+    act: deleteSubscription
+  } = useAsync((activityId) => activityApi.deleteSub(activityId, token), false);
+
+  return {
+    deleteSubscriptionLoading,
+    deleteSubscriptionError,
+    deleteSubscription
+  };
+}
+
 export function useAuditoriums() {
   const token = useToken();
 
