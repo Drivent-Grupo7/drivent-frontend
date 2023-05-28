@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import openActivity from '../../../assets/images/openActivity.png';
-import closedActivity from '../../../assets/images/closedActivity.png';
-import registered from '../../../assets/images/registered.png';
 import useToken from '../../../hooks/useToken';
 import { useActivities, useAuditoriums } from '../../../hooks/api/useActivity';
+import useUserId from '../../../hooks/useUserId';
+import { RiLoginBoxLine } from 'react-icons/ri';
+import { TiDeleteOutline } from 'react-icons/ti';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
 
 export function ActivitiesDayContent({ dateId }) {
   const token = useToken();
+  const userId = useUserId();
   const { auditoriums, auditoriumsLoading } = useAuditoriums();
   const { activities, activitiesLoading, listActivities } = useActivities();
-  const [selectedActivity, setSelectedActivity] = useState(null);
 
   useEffect(() => {
     listActivities(dateId);
   }, [token, dateId]);
 
   const handleActivityClick = (activityId) => {
-    const clickedActivity = activities.find(
-      (activity) => activity.id === activityId
-    );
-
-    if (clickedActivity) {
-      setSelectedActivity((prevState) =>
-        prevState === activityId ? null : activityId
-      );
-    }
+    //aqui você faz o post
+    //
+    //se o post retornar o erro 409
+    const deletar = window.confirm('Conflito com outra atividade! Deseja se desinscrever?');
+    //faz o delete
+    //
+    //aqui você faz o post novamente
+    //
   };
   if (activities && !activitiesLoading && auditoriums && !auditoriumsLoading) {
     return (
@@ -45,13 +45,15 @@ export function ActivitiesDayContent({ dateId }) {
                   const endTime = activity.endsAt;
                   const endObject = new Date(endTime);
                   const endTimeString = endObject.toLocaleTimeString();
+
                   const height = endObject.getHours() - startObject.getHours();
+
+                  const subscriber = activity.Subscriber.find((sub) => sub.userId === userId);
                   return (
                     <ActivityBox
                       key={activity.id}
-                      isSelected={selectedActivity === activity.id}
+                      subscriber={subscriber}
                       onClick={() => handleActivityClick(activity.id)}
-                      disableBackground={activity.capacity === 0}
                       height={height}
                     >
                       <Activity>
@@ -61,19 +63,17 @@ export function ActivitiesDayContent({ dateId }) {
                         </p>
                       </Activity>
 
-                      <Participate>
-                        <img
-                          src={
-                            selectedActivity === activity.id
-                              ? registered
-                              : activity.capacity === 0
-                                ? closedActivity
-                                : openActivity
-                          }
-                          alt="Activity"
-                        />
-                        <p style={{ color: activity.capacity === 0 ? 'red' : 'green' }}>
-                          {selectedActivity === activity.id ? 'Inscrito' : `${activity.capacity} vagas`}
+                      <Participate subscriber={subscriber} capacity={activity.capacity - activity.Subscriber.length}>
+                        <div>{
+                          subscriber
+                            ? <AiOutlineCheckCircle />
+                            : activity.capacity - activity.Subscriber.length === 0
+                              ? <TiDeleteOutline />
+                              : <RiLoginBoxLine />
+                        }
+                        </div>
+                        <p>
+                          {subscriber ? 'Inscrito' : `${activity.capacity - activity.Subscriber.length} vagas`}
                         </p>
                       </Participate>
                     </ActivityBox>
@@ -124,7 +124,7 @@ const ActivityBox = styled.div`
   width: 250px;
   height:  ${(props) => (props.height * 79) + (props.height === 1 ? 0 : (props.height - 1) * 10)}px;
   border-radius: 5px;
-  background-color: ${(props) => (props.isSelected ? '#c3e2ff' : '#f1f1f1')};
+  background-color: ${(props) => (props.subscriber ? '#D0FFDB' : '#f1f1f1')};
   display: flex;
   padding: 10px;
   margin-top: 10px;
@@ -159,10 +159,10 @@ const Participate = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  img {
-    width: 34px;
-    height: 34px;
-    margin-bottom: 5px;
+  color: ${(props) => (props.subscriber || props.capacity ? '#078632' : '#CC6666')};
+  div {
+    font-size: 28px;
+    margin-bottom: 3px;
   }
   p {
     font-weight: 500;
