@@ -1,31 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
-import { useActivities, useAuditoriums } from '../../../hooks/api/useActivity';
+import { useActivities, useAuditoriums, useDeleteSubscription, useSaveSubscription } from '../../../hooks/api/useActivity';
 import useUserId from '../../../hooks/useUserId';
 import { RiLoginBoxLine } from 'react-icons/ri';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { toast } from 'react-toastify';
 
 export function ActivitiesDayContent({ dateId }) {
   const token = useToken();
   const userId = useUserId();
   const { auditoriums, auditoriumsLoading } = useAuditoriums();
   const { activities, activitiesLoading, listActivities } = useActivities();
+  const { saveSubscription, saveSubscriptionLoading } = useSaveSubscription();
+  const { deleteSubscription, deleteSubscriptionLoading } = useDeleteSubscription();
 
   useEffect(() => {
     listActivities(dateId);
   }, [token, dateId]);
 
-  const handleActivityClick = (activityId) => {
-    //aqui você faz o post
-    //
-    //se o post retornar o erro 409
-    const deletar = window.confirm('Conflito com outra atividade! Deseja se desinscrever?');
-    //faz o delete
-    //
-    //aqui você faz o post novamente
-    //
+  const handleActivityClick = async(activityId, subscriber, capacity) => {
+    if (!subscriber) {
+      if (capacity < 1) {
+        alert('Não há vagas!');
+      } else {
+        try {
+          const data = {
+            activityId
+          };
+          await saveSubscription(data);
+          listActivities(dateId);
+          toast('Informações salvas com sucesso!');
+        } catch (err) {
+          toast('Não foi possível salvar suas informações!');
+          alert('Conflito com outra(s) atividade(s) nesse mesmo dia e horário! Primeiro se desinscreva dela(s) para se inscrever nesta!');
+        }
+      }
+    } else {
+      const deletar = window.confirm('Você já está inscrito! Deseja se desinscrever?');
+      if (deletar) {
+        try {
+          await deleteSubscription(activityId);
+          listActivities(dateId);
+          toast('Informações salvas com sucesso!');
+        } catch (err) {
+          toast('Não foi possível salvar suas informações!');
+        }
+      }
+    }
   };
   if (activities && !activitiesLoading && auditoriums && !auditoriumsLoading) {
     return (
@@ -49,11 +72,12 @@ export function ActivitiesDayContent({ dateId }) {
                   const height = endObject.getHours() - startObject.getHours();
 
                   const subscriber = activity.Subscriber.find((sub) => sub.userId === userId);
+                  const capacity = activity.capacity - activity.Subscriber.length;
                   return (
                     <ActivityBox
                       key={activity.id}
                       subscriber={subscriber}
-                      onClick={() => handleActivityClick(activity.id)}
+                      onClick={() => { (!saveSubscriptionLoading && !deleteSubscriptionLoading) && handleActivityClick(activity.id, subscriber, capacity); }}
                       height={height}
                     >
                       <Activity>
@@ -63,7 +87,7 @@ export function ActivitiesDayContent({ dateId }) {
                         </p>
                       </Activity>
 
-                      <Participate subscriber={subscriber} capacity={activity.capacity - activity.Subscriber.length}>
+                      <Participate subscriber={subscriber} capacity={capacity}>
                         <div>{
                           subscriber
                             ? <AiOutlineCheckCircle />
@@ -79,6 +103,7 @@ export function ActivitiesDayContent({ dateId }) {
                     </ActivityBox>
                   );
                 }
+                return null;
               })}
             </Activities>
           </ActivitesTitleBox>
