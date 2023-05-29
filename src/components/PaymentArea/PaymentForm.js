@@ -1,20 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import useSavePayment from '../../hooks/api/useSavePayment';
 import useTicket from '../../hooks/api/useTicket';
-import UserContext from '../../contexts/UserContext';
 
-export default function PaymentForm() {
+export default function PaymentForm({ getTicket }) {
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
   const [focus, setFocus] = useState('');
   const { savePayment, savePaymentLoading } = useSavePayment();
-  const { setConfirmedPayment } = useContext(UserContext);
   const { ticket } = useTicket();
   let issuer = 'Emissora';
 
@@ -50,7 +48,7 @@ export default function PaymentForm() {
         };
         await savePayment(data);
         toast('Pagamento realizado com sucesso!');
-        setConfirmedPayment(true);
+        getTicket();
       } catch (err) {
         toast('Não foi possível realizar seu pagamento!');
       }

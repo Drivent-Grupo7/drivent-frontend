@@ -1,20 +1,13 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import useToken from '../../hooks/useToken';
 import * as S from './style';
-import { getTicketTypes } from '../../services/ticketApi';
-import UserContext from '../../contexts/UserContext';
-import { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { useSaveReserve } from '../../hooks/api/useTicketType';
 import useTicketType from '../../hooks/api/useTicketType';
 
-export function WithOrWithoutHotel() {
-  const token = useToken();
+export function WithOrWithoutHotel({ getTicket }) {
   const [noHotel, setNoHotel] = useState(false);
   const [confirmHotel, setConfirmHotel] = useState(false);
-  const [ticketTypeData, setTicketTypeData] = useState();
-  const { userData: user } = useContext(UserContext);
   const { saveReserve, saveReserveLoading } = useSaveReserve();
   const { ticketTypes } = useTicketType();
   const [clicked, setClicked] = useState(undefined);
@@ -50,7 +43,7 @@ export function WithOrWithoutHotel() {
       };
       await saveReserve(data);
       toast('Informações salvas com sucesso!');
-      window.location.reload();
+      getTicket();
     } catch (err) {
       toast('Não foi possível salvar suas informações!');
     }

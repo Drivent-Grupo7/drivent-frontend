@@ -21,13 +21,16 @@ export async function update(bookingId, body, token) {
 }
 
 export async function getHotels(token) {
-  const response = await api.get('/hotels', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.get('/hotels', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return [];
+  }
 }
 
 export async function getHotelsWithRooms(hotelId, token) {
@@ -45,22 +48,31 @@ export async function getHotelsWithRooms(hotelId, token) {
 }
 
 export async function getBookingByHotelId(hotelId, token) {
-  const response = await api.get(`/booking/${hotelId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  if (hotelId) {
+    try {
+      const response = await api.get(`/booking/${hotelId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return { 'bookings': [[]] };
+    }
+  }
+  return { 'bookings': [[]] };
 }
 
 export async function getBookingByUserId(token) {
-  const response = await api.get('/booking', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.get('/booking', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return { id: 0, 'Room': {} };
+  }
 }
 //

@@ -11,13 +11,16 @@ export async function save(body, token) {
 }
 
 export async function getTicket(token) {
-  const response = await api.get('/tickets', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.get('/tickets', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return { id: 0, TicketType: {} };
+  }
 }
 //
 

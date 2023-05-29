@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
-import useToken from '../../hooks/useToken';
 import * as S from './style';
 import useTicketType from '../../hooks/api/useTicketType';
 import useEnrollment from '../../hooks/api/useEnrollment';
-import UserContext from '../../contexts/UserContext';
-import { useContext } from 'react';
 import { WithOrWithoutHotel } from './WithOrWithoutHotel';
 import { useSaveReserve } from '../../hooks/api/useTicketType';
 import { toast } from 'react-toastify';
 
-export default function TicketArea() {
-  const token = useToken();
-  const [remote, setRemote] = useState(false);
-  const [inPerson, setInPerson] = useState(false);
-  const [ticketTypeData, setTicketTypeData] = useState();
-  const { userData: user } = useContext(UserContext);
+export default function TicketArea({ getTicket }) {
+  const [ remote, setRemote ] = useState(false);
+  const [ inPerson, setInPerson ] = useState(false);
   const { ticketTypes } = useTicketType();
   const { enrollment } = useEnrollment();
-  const [clicked, setClicked] = useState();
+  const [ clicked, setClicked ] = useState();
   const { saveReserve, saveReserveLoading } = useSaveReserve();
-  const { setHaveTicket } = useContext(UserContext);
 
   useEffect(() => {
     let ticketTypeArray = [];
@@ -47,8 +40,7 @@ export default function TicketArea() {
       };
       await saveReserve(data);
       toast('Ticket reservado com sucesso!');
-      setHaveTicket(true);
-      window.location.reload();
+      getTicket();
     } catch (err) {
       toast('Não foi possível reservar seu ticket!');
     }
@@ -70,7 +62,7 @@ export default function TicketArea() {
             </S.Box>
           </S.BoxContainer>
         </S.PaymentContainer>
-        {inPerson ? <WithOrWithoutHotel /> : <></>}
+        {inPerson ? <WithOrWithoutHotel getTicket={getTicket} /> : <></>}
         {remote ? (
           <>
             <S.Subtitle>

@@ -9,7 +9,7 @@ import HotelReservado from '../../../components/Dashboard/HotelReservado';
 
 export default function Hotels() {
   const { ticket } = useTicket();
-  const { hotels, hotelsError } = useHotel();
+  const { hotels, hotelsLoading } = useHotel();
   const [message, setMessage] = useState('Não foi possível listar hotéis disponíveis!');
   const [roomClick, setRoomClick] = useState(0);
   const [rooms, setRooms] = useState([]);
@@ -21,10 +21,9 @@ export default function Hotels() {
   const [ update, setUpdate ] = useState(false);
   useEffect(() => {
     if (ticket) {
-      if (ticket.status === 'RESERVED') {
+      if (ticket.status === 'RESERVED' || !ticket.id) {
         setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem');
-      }
-      if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+      } else if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
         setMessage('Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades');
       }
     }
@@ -63,7 +62,7 @@ export default function Hotels() {
     }
   }
   function hotelContainer() {
-    if (hotels) {
+    if (hotels && hotels.length) {
       return (
         <>
           <h1>
@@ -83,11 +82,13 @@ export default function Hotels() {
           <ReserveButton disabled={saveBookingLoading} roomClick={roomClick} onClick={() => reserve()}>RESERVAR QUARTO</ReserveButton>
         </>
       );
+    } else {
+      return ( <Erro>{message}</Erro> );
     }
   }
   if (bookingsByUserLoading) {
     return (<>Loading</>);
-  } else if (bookingsByUser && !update) {
+  } else if (bookingsByUser.id && !update) {
     return (
       <Container>
         <Titulo>Escolha de hotel e quarto</Titulo>
@@ -102,7 +103,7 @@ export default function Hotels() {
     return (
       <Container>
         <Titulo>Escolha de hotel e quarto</Titulo>
-        {hotelsError ? <Erro>{message}</Erro> : hotelContainer()}
+        {!hotelsLoading ? hotelContainer() : <>loading</> }
       </Container>
     );
   }

@@ -31,13 +31,16 @@ export async function listAuditoriums(token) {
 };
 
 export async function listDates(token) {
-  const response = await api.get('activity/dates', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.get('activity/dates', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return [];
+  }
 };
 
 export async function listActivities(token, dateId) {
