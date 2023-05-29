@@ -15,7 +15,7 @@ export default function useAsync(handler, immediate = true) {
       setLoading(false);
       return data;
     } catch (err) {
-      setError(err.response.data);
+      setError(err);
       setLoading(false);
       throw err;
     }

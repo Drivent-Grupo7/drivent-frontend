@@ -1,15 +1,11 @@
 import styled from 'styled-components';
-import useTicket from '../../hooks/api/useTicket';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import PaymentForm from './PaymentForm';
 import check from '../../assets/images/check.png';
-import UserContext from '../../contexts/UserContext';
 
-export default function PaymentArea() {
-  const { ticket } = useTicket();
+export default function PaymentArea({ ticket, getTicket }) {
   const [ ticketName, setTicketName ] = useState('Carregando...');
   const [ ticketPrice, setTicketPrice ] = useState('');
-  const { confirmedPayment } = useContext(UserContext);
 
   useEffect(() => {
     if(ticket) {
@@ -26,14 +22,14 @@ export default function PaymentArea() {
         <p>R$ {ticketPrice}</p>
       </TicketData>
       <Subtitle>Pagamento</Subtitle>
-      {confirmedPayment? 
+      {ticket.status === 'PAID' ? 
         <PaymentConfirmed>
           <img src={check} alt='check-icon'/>
           <div>
             <p>Pagamento confirmado!</p>
             <p>Prossiga para escolha de hospedagem e atividades</p>
           </div>
-        </PaymentConfirmed> : <PaymentForm />}
+        </PaymentConfirmed> : <PaymentForm getTicket={ getTicket }/>}
     </PaymentContainer>
   );
 }

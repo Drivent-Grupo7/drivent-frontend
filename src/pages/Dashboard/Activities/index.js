@@ -8,7 +8,6 @@ import * as activityApi from '../../../services/activityApi';
 export default function Activities() {
   const { ticket } = useTicket();
   const [message, setMessage] = useState('');
-  const [reservedTicket, setReservedTicket] = useState(true);
   const [selectedButton, setSelectedButton] = useState(null);
   const [contentToShow, setContentToShow] = useState('');
   const [newConfig, setNewConfig] = useState(false);
@@ -18,16 +17,13 @@ export default function Activities() {
 
   useEffect(() => {
     if (ticket) {
-      if (ticket.TicketType.isRemote) {
+      if (ticket.status === 'RESERVED' || !ticket.id) {
+        setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de atividades');
+      } else if (ticket.TicketType.isRemote) {
         setMessage(
           'Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades'
         );
-      }
-
-      if (ticket.status === 'RESERVED') {
-        setMessage('Você precisa ter confirmado pagamento antes de fazer a escolha de atividades');
       } else {
-        setReservedTicket(false);
         dates.then((res) => setShowDates(res));
         setMessage('');
       }
@@ -43,13 +39,12 @@ export default function Activities() {
 
     setContentToShow(content);
   }
-
   return (
     <Container>
       <Titulo>Escolha de atividades</Titulo>
       <Erro message={message}>{message}</Erro>
 
-      <Conteudo reservedTicket={reservedTicket}>
+      <Conteudo reservedTicket={ticket && (!ticket.id || ticket.status === 'RESERVED' || ticket.TicketType.isRemote)}>
         <SubTitulo newConfig={newConfig}>Primeiro, filtre pelo dia do evento:</SubTitulo>
 
         <CaixaBotoes newConfig={newConfig}>
